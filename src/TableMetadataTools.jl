@@ -6,6 +6,7 @@ using TOML
 
 export label, label!
 export meta2toml, toml2meta!
+export setstyle!
 
 """
     label(table, column)
@@ -95,15 +96,15 @@ println(meta2toml(df2))
 function meta2toml(table)
     allmeta = Dict{String, Dict{String}}("metadata" => Dict{String, Any}(),
                                          "colmetadata" => Dict{String, Any}())
-    for metakey in metadatakeys(table)
-        value, style = metadata(table, metakey, style=true)
+    for metakey in DataAPI.metadatakeys(table)
+        value, style = DataAPI.metadata(table, metakey, style=true)
         allmeta["metadata"][metakey] = Dict{String, Any}("value" => value, "style" => string(style))
     end
 
-    for (col, colmetakeys) in colmetadatakeys(table)
+    for (col, colmetakeys) in DataAPI.colmetadatakeys(table)
         colmetadict = Dict{String, Any}()
         for colmetakey in colmetakeys
-            value, style = colmetadata(table, col, colmetakey, style=true)
+            value, style = DataAPI.colmetadata(table, col, colmetakey, style=true)
             colmetadict[colmetakey] = Dict{String, Any}("value" => value, "style" => string(style))
         end
         allmeta["colmetadata"][string(col)] = colmetadict
@@ -131,14 +132,71 @@ function toml2meta!(tomlstr, table)
     for (metakey, vs_dict) in pairs(allmeta["metadata"])
         value = vs_dict["value"]
         style = vs_dict["style"]
-        metadata!(table, metakey, value, style=Symbol(style))
+        DataAPI.metadata!(table, metakey, value, style=Symbol(style))
     end
 
     for col in keys(allmeta["colmetadata"])
         for (colmetakey, vs_dict) in pairs(allmeta["colmetadata"][col])
             value = vs_dict["value"]
             style = vs_dict["style"]
-            colmetadata!(table, Symbol(col), colmetakey, value, style=Symbol(style))
+            DataAPI.colmetadata!(table, Symbol(col), colmetakey, value, style=Symbol(style))
+        end
+    end
+
+    return table
+end
+
+"""
+    setstyle!(predicate, table; type=:all, style=:note)
+
+Set style for keys in `table` that match `predicate` to `style`.
+`type` determines which metadata is affected. If `:all` (the default)
+then both table-level and column-level metadata is updated. If `:table`
+then only table-level metadata is updated. If `:column` then only column-level
+metadata is updated.
+
+# Examples
+
+```
+using TableMetadataTools
+using DataFrames
+df = DataFrame(ctry=["Poland", "Canada"], gdp=[41685, 57812])
+label!(df, :ctry, "Country")
+label!(df, :gdp, "GDP per capita (USD PPP, 2022)")
+metadata!(df, "title", "GDP per country", style=:default)
+println(meta2toml(df))
+setstyle!(==("label"), df, type=:column, style=:unknown)
+println(meta2toml(df))
+setstyle!(Returns(true), df)
+println(meta2toml(df))
+```
+
+"""
+
+function setstyle!(predicate, table; type::Symbol=:all, style::Symbol=:note)
+    if !(type in (:all, :table, :column))
+        throw(ArgumentError("passed type is $type, while only :all, :table or :column are allowed"))
+    end
+
+    if type != :column
+        for metakey in DataAPI.metadatakeys(table)
+            if predicate(metakey)
+                metavalue, metastyle = DataAPI.metadata(table, metakey, style=true)
+                if metastyle != style
+                    DataAPI.metadata!(table, metakey, metavalue, style=style)
+                end
+            end
+        end
+    end
+
+    if type != :table
+        for (col, colmetakeys) in DataAPI.colmetadatakeys(table)
+            for colmetakey in colmetakeys
+                colmetavalue, colmetastyle = DataAPI.colmetadata(table, col, colmetakey, style=true)
+                if colmetastyle != style
+                    DataAPI.colmetadata!(table, col, colmetakey, colmetavalue, style=style)
+                end
+            end
         end
     end
 
