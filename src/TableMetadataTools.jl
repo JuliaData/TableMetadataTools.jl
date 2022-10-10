@@ -6,7 +6,7 @@ using TOML
 
 export label, label!
 export meta2toml, toml2meta!
-export setstyle!
+export setmetadatastyle!
 
 """
     label(table, column)
@@ -147,7 +147,7 @@ function toml2meta!(tomlstr, table)
 end
 
 """
-    setstyle!(predicate, table; type=:all, style=:note)
+    setmetadatastyle!(predicate, table; type=:all, style=:note)
 
 Set style for keys in `table` that match `predicate` to `style`.
 `type` determines which metadata is affected. If `:all` (the default)
@@ -165,15 +165,15 @@ label!(df, :ctry, "Country")
 label!(df, :gdp, "GDP per capita (USD PPP, 2022)")
 metadata!(df, "title", "GDP per country", style=:default)
 println(meta2toml(df))
-setstyle!(==("label"), df, type=:column, style=:unknown)
+setmetadatastyle!(==("label"), df, type=:column, style=:unknown)
 println(meta2toml(df))
-setstyle!(Returns(true), df)
+setmetadatastyle!(Returns(true), df)
 println(meta2toml(df))
 ```
 
 """
 
-function setstyle!(predicate, table; type::Symbol=:all, style::Symbol=:note)
+function setmetadatastyle!(predicate, table; type::Symbol=:all, style::Symbol=:note)
     if !(type in (:all, :table, :column))
         throw(ArgumentError("passed type is $type, while only :all, :table or :column are allowed"))
     end
