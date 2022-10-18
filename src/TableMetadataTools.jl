@@ -6,6 +6,7 @@ using TOML
 
 export label, label!
 export meta2toml, toml2meta!
+export meta2dict
 export setmetadatastyle!
 
 """
@@ -147,6 +148,44 @@ function toml2meta!(tomlstr, table)
 end
 
 """
+    meta2dict(table; style::Bool=false)
+
+Extract table-level and column-level metadata from `table` to a named tuple
+consisting of two dictionaries.
+
+For the `metadata` field of the named tuple the dictionary holds key-value pairs
+of table-level metadata.
+
+For the `colmetadata` field of the named tuple the dictionary holds the
+key-value pairs, where key is column name and value is dictionary that holds
+key-value pairs of column-level metadata for this column.
+
+If `style=false` (the default) only metadata values are stored, otherwise
+if it is `true` also metadata style is extracted.
+
+# Examples
+
+```
+using TableMetadataTools
+using DataFrames
+df = DataFrame(ctry=["Poland", "Canada"], gdp=[41685, 57812])
+label!(df, :ctry, "Country")
+label!(df, :gdp, "GDP per capita (USD PPP, 2022)")
+metadata!(df, "title", "GDP per country", style=:note)
+meta2dict(df)
+meta2dict(df, style=true)
+```
+"""
+function meta2dict(table; style::Bool=false)
+    tablemeta = Dict{String, Any}([key => DataAPI.metadata(table, key, style=style)
+                                   for key in DataAPI.metadatakeys(table)])
+    colmeta = Dict([col => Dict{String, Any}([key => DataAPI.colmetadata(table, col, key, style=style)
+                                              for key in DataAPI.colmetadatakeys(table, col)])
+                    for (col, meta) in DataAPI.colmetadatakeys(table)])
+    return (metadata=tablemeta, colmetadata=colmeta)
+end
+
+"""
     setmetadatastyle!(predicate, table; type=:all, style=:note)
 
 Set style for keys in `table` that match `predicate` to `style`.
@@ -170,7 +209,6 @@ println(meta2toml(df))
 setmetadatastyle!(Returns(true), df)
 println(meta2toml(df))
 ```
-
 """
 
 function setmetadatastyle!(predicate, table; type::Symbol=:all, style::Symbol=:note)
