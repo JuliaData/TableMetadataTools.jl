@@ -125,8 +125,8 @@ transform!(df, :col => ByRow(exp))
 ```
 """
 function tracklog(io::IO, obj)
-    keys = [key for key in metadatakeys(obj) if startswith(key, "track_")]
-    values = [metadata(obj, key) for key in keys]
+    keys = [key for key in DataAPI.metadatakeys(obj) if startswith(key, "track_")]
+    values = [DataAPI.metadata(obj, key) for key in keys]
     stamps = [DateTime(strip(chop(key, head=6, tail=0), '_')) for key in keys]
     foreach(println, values[sortperm(stamps)])
 end

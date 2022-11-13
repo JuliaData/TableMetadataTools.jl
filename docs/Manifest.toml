@@ -713,7 +713,7 @@ version = "1.0.0"
 
 [[deps.TableMetadataTools]]
 deps = ["DataAPI", "Dates", "TOML", "Tables"]
-git-tree-sha1 = "434b8b29877ba6ecc8f5c6ab78c1d094446c5a87"
+git-tree-sha1 = "92ae0d7c31da1e747dbb6e1a6985167ac211588d"
 repo-rev = "main"
 repo-url = "https://github.com/JuliaData/TableMetadataTools.jl"
 uuid = "9ce81f87-eacc-4366-bf80-b621a3098ee2"
