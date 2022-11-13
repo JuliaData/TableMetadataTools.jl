@@ -17,6 +17,7 @@ Currently it defines and exports:
 * `dict2metadata!`, `dict2colmetadata!` for setting table and column level
   metadata stored in a dictionary (e.g. earlier retrieved from some storage
   format or by using `metadata` or `colmetadata` functions).
+* `@track` macro for tracking operations applied to table.
 
 # Installation
 
