@@ -18,52 +18,29 @@ Currently it defines and exports:
   metadata stored in a dictionary (e.g. earlier retrieved from some storage
   format or by using `metadata` or `colmetadata` functions).
 
-# Example
+# Installation
+
+This package is still in experimental phase (gathering users' feedback).
+Therefore the current way of installing it is:
 
 ```
-using DataFrames
-using TableMetadataTools
-using Plots
-
-df = DataFrame(year=2018:2021, 
-               gdppc=[15468.48222, 15732.20313, 15742.45373, 17840.92105])
-caption!(df, "GDP per capita of Poland");
-note!(df, "World Bank national accounts data, \
-           and OECD National Accounts data files.");
-metadata!(df, "License", "CC BY-4.0")
-metadata!(df, "Periodicity", "Annual")
-label!(df, :gdppc, "GDP per capita (current USD)");
-note!(df, :gdppc, "GDP: gross domestic product");
-note!(df, :gdppc, "population taken in midyear", append=true);
-caption(df)
-label(df, :year)
-label(df, :gdppc)
-println(note(df))
-println(note(df, :year))
-println(note(df, :gdppc))
-metadata(df, style=true)
-setmetadatastyle!(df)
-metadata(df, style=true)
-toml_meta = meta2toml(df, style=false);
-println(toml_meta)
-toml2meta!(df, toml_meta)
-println(meta2toml(df))
-setallmetadatastyle!(df)
-println(meta2toml(df))
-
-df2 = copy(df)
-println(meta2toml(df2))
-emptymetadata!(df2)
-emptycolmetadata!(df2)
-println(meta2toml(df2))
-dict2metadata!(df2, metadata(df))
-dict2colmetadata!(df2, colmetadata(df))
-println(meta2toml(df2))
-dict2metadata!(df2, metadata(df, style=true), style=true)
-dict2colmetadata!(df2, colmetadata(df, style=true), style=true)
-println(meta2toml(df2))
-
-show(df, header=labels(df), title=caption(df))
-plot(df.year, df.gdppc, xlabel=label(df, :year), ylabel=label(df, :gdppc), title=caption(df), legend=false)
+] add https://github.com/JuliaData/TableMetadataTools.jl
 ```
+
+(`]` switches you to package manager mode in Julia REPL)
+
+# Usage
+
+All exported functions have docstrings explaining their behavior.
+
+You can find a demo how the package can be used to work with metadata
+in /docs/demo.ipynb Jupyter Notebook.
+
+To run it have your terminal in the /docs folder and do the following steps:
+* start Julia with `julia --project`
+* to make sure all packages are instantiated correctly run
+  `using Pkg; Pkg.instantiate()` (this has to be done only the first time
+  you run the demo)
+* start Jupyter Notebook by writing `using IJulia; notebook(dir=pwd())`.
+* open `demo.ipynb` notebook.
 
