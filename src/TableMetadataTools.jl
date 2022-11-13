@@ -5,7 +5,7 @@ using Dates
 using Tables
 using TOML
 
-export label, label!
+export label, label!, labels
 export caption, caption!
 export note, note!
 export setmetadatastyle!, setcolmetadatastyle!, setallmetadatastyle!
