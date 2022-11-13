@@ -23,16 +23,20 @@ julia> df = DataFrame(a=1:3)
    2 │     2
    3 │     3
 
-julia> agg = @track combine(df, :a => sum)
+julia> @track agg = combine(df, :a => sum)
 1×1 DataFrame
  Row │ a_sum
      │ Int64
 ─────┼───────
    1 │     6
 
-julia> metadata(agg)
-Dict{String, String} with 1 entry:
-  "track_2022-11-13T20:47:55.159" => "combine(df, :a => sum)"
+julia> print(meta2toml(agg))
+style = true
+
+[colmetadata]
+
+[metadata]
+"track_2022-11-13T21:18:47.359" = ["agg = combine(df, :a => sum)", "note"]
 ```
 
 """
