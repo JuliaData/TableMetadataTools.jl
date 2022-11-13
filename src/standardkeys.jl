@@ -13,7 +13,7 @@ See also: [`label!`](@ref)
 """
 function label(table, column)
     idx = column isa Union{Signed, Unsigned} ? Int(column) : Tables.columnindex(table, column)
-    idx == 0 && throw(ArgumentError("column $col not found in table"))
+    idx == 0 && throw(ArgumentError("column $column not found in table"))
     # use conditional to avoid calling Tables.columnnames if it is not needed
     if "label" in DataAPI.colmetadatakeys(table, column)
         return string(DataAPI.colmetadata(table, column, "label"))
@@ -22,6 +22,8 @@ function label(table, column)
         return string(Tables.columnnames(cols)[idx])
     end
 end
+
+labels(table) = [label(table, column) for column in Tables.columnnames(Tables.columns(table))]
 
 """
     label!(table, column, label)
@@ -47,8 +49,8 @@ See also: [`caption!`](@ref)
 ```
 """
 caption(table) =
-    if "label" in DataAPI.colmetadatakeys(table, column)
-        return string(DataAPI.colmetadata(table, column, "caption"))
+    if "caption" in DataAPI.metadatakeys(table)
+        return string(DataAPI.metadata(table, "caption"))
     else
         return ""
     end
@@ -119,9 +121,9 @@ newline.
 See also: [`note`](@ref)
 """
 note!(table, note; append::Bool=false) =
-    if append && "note" in metadatakeys(table)
-        DataAPI.metadata!(table, column, "note",
-                          string(note(table, column), "\n", note), style=:note)
+    if append && "note" in DataAPI.metadatakeys(table)
+        DataAPI.metadata!(table, "note",
+                          string(TableMetadataTools.note(table), "\n", note), style=:note)
     else
         DataAPI.metadata!(table, "note", string(note), style=:note)
     end
@@ -140,10 +142,10 @@ newline.
 See also: [`note`](@ref)
 """
 note!(table, column, note; append::Bool=false) =
-    if append && "note" in colmetadatakeys(table, column)
+    if append && "note" in DataAPI.colmetadatakeys(table, column)
         DataAPI.colmetadata!(table, column, "note",
-                             string(note(table, column), "\n", label), style=:note)
+                             string(TableMetadataTools.note(table, column), "\n", note), style=:note)
     else
-        DataAPI.colmetadata!(table, column, "note", string(label), style=:note)
+        DataAPI.colmetadata!(table, column, "note", string(note), style=:note)
     end
 

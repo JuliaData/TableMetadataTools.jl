@@ -1,7 +1,8 @@
 """
-    setmetadatastyle!(predicate, table; style::Symbol=:note)
+    setmetadatastyle!([predicate], table; style::Symbol=:note)
 
 Set style for table-level keys in `table` that match `predicate` to `style`.
+If `predicate` is omitted then all metadata is updated.
 
 See also: [`setcolmetadatastyle`!](@ref), [`setallmetadatastyle!](@ref)
 """
@@ -18,10 +19,14 @@ function setmetadatastyle!(predicate, table; style::Symbol=:note)
     return table
 end
 
+setmetadatastyle!(table; style::Symbol=:note) =
+    setmetadatastyle!(Returns(true), table, style=style)
+
 """
-    setcolmetadatastyle!(predicate, table; style::Symbol=:note)
+    setcolmetadatastyle!([predicate], table; style::Symbol=:note)
 
 Set style for column-level keys in `table` that match `predicate` to `style`.
+If `predicate` is omitted then all metadata is updated.
 
 See also: [`setmetadatastyle`!](@ref), [`setallmetadatastyle!](@ref)
 """
@@ -38,11 +43,15 @@ function setcolmetadatastyle!(predicate, table; style::Symbol=:note)
     return table
 end
 
+setcolmetadatastyle!(table; style::Symbol=:note) =
+    setcolmetadatastyle!(Returns(true), table, style=style)
+
 """
-    setallmetadatastyle!(predicate, table; style::Symbol=:note)
+    setallmetadatastyle!([predicate], table; style::Symbol=:note)
 
 Set style for table-level and column-level keys in `table` that match
 `predicate` to `style`.
+If `predicate` is omitted then all metadata is updated.
 
 See also: [`setmetadatastyle`!](@ref), [`setcolmetadatastyle!](@ref)
 """
@@ -51,4 +60,7 @@ function setallmetadatastyle!(predicate, table; style::Symbol=:note)
     setcolmetadatastyle!(predicate, table, style=style)
     return table
 end
+
+setallmetadatastyle!(table; style::Symbol=:note) =
+    setallmetadatastyle!(Returns(true), table, style=style)
 

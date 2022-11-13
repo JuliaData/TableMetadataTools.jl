@@ -10,7 +10,7 @@ export caption, caption!
 export note, note!
 export setmetadatastyle!, setcolmetadatastyle!, setallmetadatastyle!
 export meta2toml, toml2meta!
-export dict2metadata, dict2colmetadata!
+export dict2metadata!, dict2colmetadata!
 
 include("standardkeys.jl")
 include("updatestyle.jl")
