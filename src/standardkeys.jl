@@ -8,7 +8,7 @@ interface.
 If `"label"` column-level metadata for column `column` is missing return
 name of column `column` as string.
 
-See also: [`label!`](@ref)
+See also: [`label!`](@ref), [`labels`](@ref)
 ```
 """
 function label(table, column)
@@ -23,7 +23,31 @@ function label(table, column)
     end
 end
 
-labels(table) = [label(table, column) for column in Tables.columnnames(Tables.columns(table))]
+"""
+    labels(table)
+
+Return a vector of column labels of a `table` by calling [`label`](@ref)
+on each its column.
+
+See also: [`label!`](@ref), [`labels`](@ref)
+```
+"""
+labels(table) =
+    [label(table, column) for column in Tables.columnnames(Tables.columns(table))]
+
+"""
+    findlabels(predicate, table)
+
+Return a vector of column_name => column_label pairs containing
+all values for which `predicate(label(table, column_name))` returns `true`.
+This is intended for a quick lookup of column names whose label meets some
+criteria defined by `predicate`.
+
+See also: [`label`](@ref), [`label!`](@ref), [`labels`](@ref)
+"""
+findlabels(predicate, table) = 
+    [column => label(table, column) for column in Tables.columnnames(Tables.columns(table))
+     if predicate(label(table, column))]
 
 """
     label!(table, column, label)
@@ -32,7 +56,7 @@ Store string representation of `label` as value of `"label"` key with
 `:note`-style as column-level metadata for column `column` in
 `table` that must be compatible with Tables.jl table interface.
 
-See also: [`label`](@ref)
+See also: [`label`](@ref), [`labels`](@ref)
 """
 label!(table, column, label) =
     DataAPI.colmetadata!(table, column, "label", string(label), style=:note)
