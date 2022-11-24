@@ -2,8 +2,8 @@
 Tools for working with metadata of Tables.jl tables in Julia.
 
 Currently it defines and exports:
-* `label`, `label!`, and `labels` functions for convenient work with column
-  label metadata;
+* `label`, `label!`, `labels`, and `findlabels` functions for convenient work
+  with column label metadata;
 * `caption` and `caption!` functions for convenient work with table caption
   metadata;
 * `note` and `note!` functions for convenient work with note metadata both on
