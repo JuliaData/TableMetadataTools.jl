@@ -33,9 +33,11 @@ See also: [`setmetadatastyle`!](@ref), [`setallmetadatastyle!](@ref)
 function setcolmetadatastyle!(predicate, table; style::Symbol=:note)
     for (col, colmetakeys) in DataAPI.colmetadatakeys(table)
         for colmetakey in colmetakeys
-            colmetavalue, colmetastyle = DataAPI.colmetadata(table, col, colmetakey, style=true)
-            if colmetastyle != style
-                DataAPI.colmetadata!(table, col, colmetakey, colmetavalue, style=style)
+            if predicate(colmetakey)
+                colmetavalue, colmetastyle = DataAPI.colmetadata(table, col, colmetakey, style=true)
+                if colmetastyle != style
+                    DataAPI.colmetadata!(table, col, colmetakey, colmetavalue, style=style)
+                end
             end
         end
     end
