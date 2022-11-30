@@ -48,8 +48,8 @@ See also: [`meta2toml`](@ref)
 function toml2meta!(table, toml::Union{AbstractString, IO})
     allmeta = TOML.parse(toml)
     allmeta["colmetadata"] = Dict(Symbol(k) => v for (k, v) in allmeta["colmetadata"])
-    dict2metadata!(table, allmeta["metadata"], style=Symbol(allmeta["style"]))
-    dict2colmetadata!(table, allmeta["colmetadata"], style=Symbol(allmeta["style"]))
+    dict2metadata!(table, allmeta["metadata"], style=allmeta["style"])
+    dict2colmetadata!(table, allmeta["colmetadata"], style=allmeta["style"])
     return table
 end
 
@@ -106,6 +106,7 @@ function dict2colmetadata!(table, dict; style::Bool=false, defaultstyle::Symbol=
         for (colmetakey, colmetavalue) in pairs(dict[col])
             if style
                 value, vstyle = colmetavalue
+                vstyle = Symbol(vstyle)
             else
                 value, vstyle = colmetavalue, defaultstyle
             end
