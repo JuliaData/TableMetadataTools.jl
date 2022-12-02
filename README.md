@@ -10,7 +10,7 @@ Currently it defines and exports:
   table and column level;
 * `setmetadatastyle!`, `setcolmetadatastyle!`, `setallmetadatastyle!` for group
   setting style for keys matching a passed pattern; usually needed when working
-  with metadata that initially has `:defualt` style set and one wants it to
+  with metadata that initially has `:default` style set and one wants it to
   have `:note` style (common when reading metadata from storage formats that do
   not support metadata style information);
 * `meta2toml` and `toml2meta!` for storing and loading metadata in TOML format;
@@ -28,7 +28,7 @@ Therefore the current way of installing it is:
 ] add https://github.com/JuliaData/TableMetadataTools.jl
 ```
 
-(`]` switches you to package manager mode in Julia REPL)
+(`]` switches you to package manager mode in Julia REPL.)
 
 # Usage
 
