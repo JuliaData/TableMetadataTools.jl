@@ -8,6 +8,8 @@ Currently it defines and exports:
   metadata;
 * `note` and `note!` functions for convenient work with note metadata both on
   table and column level;
+* `unit` (re-exported from Unitful.jl), `unit!`, and `units` functions for
+  convenient work with column unit metadata;
 * `setmetadatastyle!`, `setcolmetadatastyle!`, `setallmetadatastyle!` for group
   setting style for keys matching a passed pattern; usually needed when working
   with metadata that initially has `:default` style set and one wants it to

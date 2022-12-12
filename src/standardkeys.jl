@@ -29,7 +29,7 @@ end
 Return a vector of column labels of a `table` by calling [`label`](@ref)
 on each its column.
 
-See also: [`label!`](@ref), [`labels`](@ref)
+See also: [`label`](@ref), [`label!`](@ref)
 ```
 """
 labels(table) =
@@ -172,4 +172,65 @@ note!(table, column, note; append::Bool=false) =
     else
         DataAPI.colmetadata!(table, column, "note", string(note), style=:note)
     end
+
+"""
+    unit(table, column)
+
+Return representation of the value of the `"unit"` column-level metadata
+of column `column` in `table` that must be compatible with Tables.jl table
+interface.
+
+If `"unit"` column-level metadata for column `column` is missing and element
+type of the column is `Units.Quantity` or `Dates.FixedPeriod` return unit of
+this type. If element type is `Number` return `Unitful.NoUnits`. Union with
+`Missing` is allowed in the above cases. For all other cases return `missing`.
+
+See also: [`unit!`](@ref), [`units`](@ref)
+```
+"""
+function Unitful.unit(table, column)
+    idx = column isa Union{Signed, Unsigned} ? Int(column) : Tables.columnindex(table, column)
+    idx == 0 && throw(ArgumentError("column $column not found in table"))
+    # use conditional to avoid calling Tables.columnnames if it is not needed
+    if "unit" in DataAPI.colmetadatakeys(table, column)
+        return DataAPI.colmetadata(table, column, "unit")
+    else
+        et = eltype(Tables.getcolumn(Tables.columns(table), column)) 
+        et === Missing && return missing
+        et <: Union{Unitful.Quantity, Missing} && return unit(et)
+        et <: Union{Dates.FixedPeriod, Missing} && return unit(et)
+        et <: Union{Unitful.Number, Missing} && return unit(et)
+    end
+    return missing
+end
+
+"""
+    units(table)
+
+Return a vector of column units of a `table` by calling [`unit`](@ref)
+on each its column.
+
+See also: [`unit!`](@ref), [`labels`](@ref)
+```
+"""
+units(table) =
+    [unit(table, column) for column in Tables.columnnames(Tables.columns(table))]
+
+"""
+    unit!(table, column, unit)
+
+Store representation of `unit` as value of `"unit"` key with
+`:note`-style as column-level metadata for column `column` in
+`table` that must be compatible with Tables.jl table interface.
+Any value is accepted for user convenience, however `Unitful.Units`
+unit is recommended.
+
+Note that if element type of column `column` is `Unitful.Quantity` or
+`Dates.FixedPeriod` then setting unit is not needed (but can be done to
+override the default unit).
+
+See also: [`unit`](@ref), [`units`](@ref)
+"""
+unit!(table, column, unit) =
+    DataAPI.colmetadata!(table, column, "unit", unit, style=:note)
 
