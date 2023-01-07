@@ -128,7 +128,7 @@ function tracklog(io::IO, obj)
     keys = [key for key in DataAPI.metadatakeys(obj) if startswith(key, "track_")]
     values = [DataAPI.metadata(obj, key) for key in keys]
     stamps = [DateTime(strip(chop(key, head=6, tail=0), '_')) for key in keys]
-    foreach(println, values[sortperm(stamps)])
+    foreach(x -> println(io, x), values[sortperm(stamps)])
 end
 
 tracklog(obj) = tracklog(stdout, obj)
