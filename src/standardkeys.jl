@@ -9,7 +9,6 @@ If `"label"` column-level metadata for column `column` is missing return
 name of column `column` as string.
 
 See also: [`label!`](@ref), [`labels`](@ref)
-```
 """
 function label(table, column)
     idx = column isa Union{Signed, Unsigned} ? Int(column) : Tables.columnindex(table, column)
@@ -30,7 +29,6 @@ Return a vector of column labels of a `table` by calling [`label`](@ref)
 on each its column.
 
 See also: [`label`](@ref), [`label!`](@ref)
-```
 """
 labels(table) =
     [label(table, column) for column in Tables.columnnames(Tables.columns(table))]
@@ -45,7 +43,7 @@ criteria defined by `predicate`.
 
 See also: [`label`](@ref), [`label!`](@ref), [`labels`](@ref)
 """
-findlabels(predicate, table) = 
+findlabels(predicate, table) =
     [column => label(table, column) for column in Tables.columnnames(Tables.columns(table))
      if predicate(label(table, column))]
 
@@ -70,7 +68,6 @@ metadata in `table` that must be compatible with Tables.jl table interface.
 If `"caption"` table-level metadata is missing return "".
 
 See also: [`caption!`](@ref)
-```
 """
 caption(table) =
     if "caption" in DataAPI.metadatakeys(table)
@@ -100,7 +97,6 @@ metadata in `table` that must be compatible with Tables.jl table interface.
 If `"note"` table-level metadata is missing return "".
 
 See also: [`note!`](@ref)
-```
 """
 note(table) =
     if "note" in DataAPI.metadatakeys(table)
@@ -119,7 +115,6 @@ interface.
 If `"note"` column-level metadata for column `column` is missing return "".
 
 See also: [`note!`](@ref)
-```
 """
 function note(table, column)
     idx = column isa Union{Signed, Unsigned} ? Int(column) : Tables.columnindex(table, column)
@@ -192,7 +187,6 @@ If this assumption would not hold in the future the definition of `unit` in
 this package might change.
 
 See also: [`unit!`](@ref), [`units`](@ref)
-```
 """
 function Unitful.unit(table, column)
     idx = column isa Union{Signed, Unsigned} ? Int(column) : Tables.columnindex(table, column)
@@ -201,7 +195,7 @@ function Unitful.unit(table, column)
     if "unit" in DataAPI.colmetadatakeys(table, column)
         return DataAPI.colmetadata(table, column, "unit")
     else
-        et = eltype(Tables.getcolumn(Tables.columns(table), column)) 
+        et = eltype(Tables.getcolumn(Tables.columns(table), column))
         et === Missing && return missing
         et <: Union{Unitful.Quantity, Missing} && return unit(et)
         et <: Union{Dates.FixedPeriod, Missing} && return unit(et)
@@ -217,7 +211,6 @@ Return a vector of column units of a `table` by calling [`unit`](@ref)
 on each its column.
 
 See also: [`unit!`](@ref), [`labels`](@ref)
-```
 """
 units(table) =
     [unit(table, column) for column in Tables.columnnames(Tables.columns(table))]
@@ -239,4 +232,3 @@ See also: [`unit`](@ref), [`units`](@ref)
 """
 unit!(table, column, unit) =
     DataAPI.colmetadata!(table, column, "unit", unit, style=:note)
-
