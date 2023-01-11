@@ -24,10 +24,11 @@ Currently it defines and exports:
 # Installation
 
 This package is still in experimental phase (gathering users' feedback).
-Therefore the current way of installing it is:
+
+To install it write:
 
 ```
-] add https://github.com/JuliaData/TableMetadataTools.jl
+] add TableMetadataTools.jl
 ```
 
 (`]` switches you to package manager mode in Julia REPL.)
