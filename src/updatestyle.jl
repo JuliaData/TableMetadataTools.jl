@@ -20,7 +20,7 @@ function setmetadatastyle!(predicate, table; style::Symbol=:note)
 end
 
 setmetadatastyle!(table; style::Symbol=:note) =
-    setmetadatastyle!(Returns(true), table, style=style)
+    setmetadatastyle!(_ -> true, table, style=style)
 
 """
     setcolmetadatastyle!([predicate], table; style::Symbol=:note, [col::Symbol])
@@ -52,7 +52,7 @@ end
 
 setcolmetadatastyle!(table; style::Symbol=:note,
                      col::Union{Nothing, Symbol}=nothing) =
-    setcolmetadatastyle!(Returns(true), table, style=style, col=col)
+    setcolmetadatastyle!(_ -> true, table, style=style, col=col)
 
 """
     setallmetadatastyle!([predicate], table; style::Symbol=:note)
@@ -70,5 +70,5 @@ function setallmetadatastyle!(predicate, table; style::Symbol=:note)
 end
 
 setallmetadatastyle!(table; style::Symbol=:note) =
-    setallmetadatastyle!(Returns(true), table, style=style)
+    setallmetadatastyle!(_ -> true, table, style=style)
 
