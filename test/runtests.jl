@@ -44,6 +44,19 @@ end
     note!(df, :b, "three", append=true)
     @test note(df, 2) == "two\nthree"
     @test colmetadata(df, :b, "note", style=true) == ("two\nthree", :note)
+
+    for column in (:absent, "absent", 0, UInt8(0))
+        err = try
+            note(df, column)
+        catch exception
+            exception
+        end
+        @test err isa ArgumentError
+        @test sprint(showerror, err) == "ArgumentError: column $column not found in table"
+    end
+    @test note(df) == "two\nthree"
+    @test note(df, :b) == "two\nthree"
+    @test names(df) == ["a", "b", "c"]
 end
 
 @testset "unit, unit!, units" begin
