@@ -118,7 +118,7 @@ See also: [`note!`](@ref)
 """
 function note(table, column)
     idx = column isa Union{Signed, Unsigned} ? Int(column) : Tables.columnindex(table, column)
-    idx == 0 && throw(ArgumentError("column $col not found in table"))
+    idx == 0 && throw(ArgumentError("column $column not found in table"))
     if "note" in DataAPI.colmetadatakeys(table, column)
         return string(DataAPI.colmetadata(table, column, "note"))
     else
