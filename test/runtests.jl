@@ -94,7 +94,7 @@ end
     @test metadata(df, "caption", style=true) == ("xxx", :default)
     @test metadata(df, "note", style=true) == ("1", :note)
     @test colmetadata(df, :a, "label", style=true) == ("yyy", :note)
-    @test colmetadata(df, :b, "note", style=true) == ("2", :note)
+    @test colmetadata(df, :b, "note", style=true) == ("2", :default)
 
     setmetadatastyle!(==("caption"), df)
     setcolmetadatastyle!(==("note"), df)
@@ -128,6 +128,41 @@ end
     @test metadata(df, "note", style=true) == ("1", :note)
     @test colmetadata(df, :a, "label", style=true) == ("yyy", :note)
     @test colmetadata(df, :b, "note", style=true) == ("2", :note)
+end
+
+@testset "Selected column metadata styles" begin
+    for target in (:a, :b), style in (:default, :note), use_predicate in (false, true)
+        df = DataFrame(a = 1, b = 2, c = 3)
+        initial = style == :default ? :note : :default
+        caption!(df, "table")
+        colmetadata!(df, :a, "note", "A", style = initial)
+        colmetadata!(df, :b, "note", "B", style = initial)
+        label!(df, :a, "label A")
+        label!(df, :b, "label B")
+        result = if use_predicate
+            setcolmetadatastyle!(==("note"), df; style = style, col = target)
+        else
+            setcolmetadatastyle!(df; style = style, col = target)
+        end
+        other = target == :a ? :b : :a
+        target_value = target == :a ? "A" : "B"
+        other_value = target == :a ? "B" : "A"
+        @test result === df
+        @test colmetadata(df, target, "note", style = true) == (target_value, style)
+        @test colmetadata(df, other, "note", style = true) == (other_value, initial)
+        @test colmetadata(df, target, "label", style = true) ==
+              ("label " * target_value, use_predicate ? :note : style)
+        @test colmetadata(df, other, "label", style = true) == ("label " * other_value, :note)
+        @test metadata(df, "caption", style = true) == ("table", :note)
+    end
+
+    df = DataFrame(a = 1, b = 2, c = 3)
+    note!(df, :a, "A")
+    note!(df, :b, "B")
+    @test setcolmetadatastyle!(df; style = :default, col = :c) === df
+    @test colmetadata(df, :a, "note", style = true) == ("A", :note)
+    @test colmetadata(df, :b, "note", style = true) == ("B", :note)
+    @test isempty(colmetadatakeys(df, :c))
 end
 
 @testset "meta2toml, toml2meta!" begin

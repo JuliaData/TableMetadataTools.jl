@@ -36,7 +36,7 @@ function setcolmetadatastyle!(predicate, table; style::Symbol=:note,
                               col::Union{Nothing, Symbol}=nothing)
     for (c, colmetakeys) in DataAPI.colmetadatakeys(table)
         # if col is passed skip all columns except col
-        isnothing(col) || c != col || continue
+        isnothing(col) || c == col || continue
         for colmetakey in colmetakeys
             if predicate(colmetakey)
                 colmetavalue, colmetastyle = DataAPI.colmetadata(table, c, colmetakey, style=true)
